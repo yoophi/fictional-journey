@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% from 'post/common.html' import edit_field %}
+
+{% if request.endpoint.endswith('edit') %}
+  {% set title = 'Edit Post' %}
+{% else %}
+  {% set title = 'Add Post' %}
+{% endif %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block main %}
+<div class="row">
+    <div class="post-edit well offset2 span8">
+        <form method="post" class="form-horizontal">
+            {{ form.csrf_token }}
+            <legend>{{ title }}</legend>
+      {{ edit_field(form.title, maxlength=255, class="span3",
+                    placeholder="Post Title") }}
+      {{ edit_field(form.content, rows="5", class="span5",
+                    placeholder="Post Content.") }}
+            <div class="form-actions">
+        <button type="submit" class="btn">Save</button>
+        or <a href="{{ url_for('post_list') }}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock main %}
