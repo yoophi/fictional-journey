@@ -1,17 +1,17 @@
 {% macro detail(post, link_title=false, show_edit=true, show_description=true) %}
-  <div class="appointment-detail">
+  <div class="post-detail">
     {% if link_title %}
-      <h3><a href="{{ url_for('post_detail', id=str(post.id)) }}">{{ post.title or '(untitled)' }} {{ post.id }}</a></h3>
+      <h3><a href="{{ url_for('post_detail', id=post.id) }}">{{ post.title or '(untitled)' }}</a></h3>
     {% else %}
       <h3>{{ post.title or '(untitled)' }}</h3>
     {% endif %}
     {% if show_edit %}
     <div class="edit-controls">
         <i class="icon-pencil"></i>
-        <a href="{{ url_for('post_edit', post_id=post.id) }}">Edit</a>
+        <a href="{{ url_for('post_edit', id=post.id) }}">Edit</a>
         <span class="inline-pad"></span>
         <i class="icon-trash"></i>
-        <a class="appointment-delete-link" href="#" data-delete-url="{{ url_for('post_delete', post_id=post.id) }}">Delete</a>
+        <a class="post-delete-link" href="#" data-delete-url="{{ url_for('post_delete', id=post.id) }}">Delete</a>
     </div>
     {% endif %}
     {% if show_description and post.content %}

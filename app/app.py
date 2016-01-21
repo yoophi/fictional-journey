@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, abort
 from flask.ext.debugtoolbar import DebugToolbarExtension
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.mongoengine.wtf import model_form
@@ -56,7 +56,12 @@ def post_add():
 
 @app.route('/post/<id>')
 def post_detail(id):
-    return id
+    post = Post.objects(id=id).first()
+    if post is None:
+        # Abort with Not Found.
+        abort(404)
+    return render_template('post/detail.html', post=post)
+
 
 
 @app.route('/posts', methods=['GET'])
@@ -72,9 +77,23 @@ def user_add():
     return str(ross)
 
 
-@app.route('/sample2')
-def sample2():
-    return render_template('index.html')
+@app.route('/post/<id>/edit/', methods=['GET', 'POST'])
+def post_edit(id):
+    """Provide HTML form to edit a given appointment."""
+    post = Post.objects(id=id).first()
+    if post is None:
+        abort(404)
+    form = PostForm(request.form, post)
+    if request.method == 'POST' and form.validate():
+        form.populate_obj(post)
+        post.save()
+        # Success. Send the user back to the detail view of that appointment.
+        return redirect(url_for('post_detail', id=post.id))
+    return render_template('post/edit.html', form=form)
+
+@app.route('/post/<id>/delete')
+def post_delete(id):
+    return 'post_delete'
 
 
 if __name__ == '__main__':
